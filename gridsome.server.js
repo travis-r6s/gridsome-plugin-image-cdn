@@ -25,7 +25,7 @@ function ImageCDN (api, options) {
               // If no transformer is configure, ignore it and return the opiginal url
               if (!transformer) return sourceUrl
               // Otherwise handoff to the transformer
-              return transformer({ cdnUrl: cdn.baseUrl, sourceUrl, args })
+              return transformer({ cdn, sourceUrl, args })
             }
           }
         }
@@ -37,5 +37,13 @@ function ImageCDN (api, options) {
 module.exports = ImageCDN
 
 module.exports.defaultOptions = () => ({
+  site: {
+    baseUrl: ''
+  },
+  cdn: {
+    baseUrl: '',
+    imagePrefix: '',
+    preset: ''
+  },
   types: []
 })
