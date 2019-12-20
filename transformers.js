@@ -2,33 +2,42 @@ const path = require('path')
 
 const imageKitTransformer = {
   transformer: ({ cdn, sourceUrl, args }) => {
-    const { height, width, quality = '85', progressive = true, crop, cropMode, format = 'auto', focus, blur, trimEdges, rotate, radius, grayscale, contrast, sharpen } = args
+    // Create a map of all available transforms, their prefixes, and the type
+    const transformArgs = new Map([
+      ['height', { prefix: 'h', type: 'primary' }],
+      ['width', { prefix: 'w', type: 'primary' }],
+      ['rotate', { prefix: 'rt', type: 'primary' }],
+      ['quality', { prefix: 'q', type: 'primary' }],
+      ['blur', { prefix: 'bl', type: 'primary' }],
+      ['trimEdges', { prefix: 't', type: 'primary' }],
+      ['radius', { prefix: 'r', type: 'primary' }],
+      ['grayscale', { prefix: 'e-grayscale', type: 'primary' }],
+      ['contrast', { prefix: 'e-contrast', type: 'primary' }],
+      ['sharpen', { prefix: 'e-sharpen', type: 'primary' }],
+      ['crop', { prefix: 'c', type: 'secondary' }],
+      ['cropMode', { prefix: 'cm', type: 'secondary' }],
+      ['focus', { prefix: 'fo', type: 'secondary' }],
+      ['format', { prefix: 'f', type: 'secondary' }],
+      ['progressive', { prefix: 'pr', type: 'secondary' }]
+    ])
+
+    // We have two types (or levels) of transformations, so we need to seperate into two seperate strings, then join later
+    const transformations = []
     const transformString = []
 
-    const transformations = []
-    if (rotate) transformations.push(`rt-${rotate}`)
-    if (height) transformations.push(`h-${height}`)
-    if (width) transformations.push(`w-${width}`)
-    if (quality) transformations.push(`q-${quality}`)
-    if (blur) transformations.push(`bl-${blur}`)
-    if (trimEdges) transformations.push(`t-${trimEdges}`)
-    if (radius) transformations.push(`r-${radius}`)
-    // Enhancement
-    if (grayscale) transformations.push('e-grayscale')
-    if (contrast) transformations.push('e-contrast')
-    if (sharpen) transformations.push('e-sharpen')
+    // Loop through each argument, and add the respective transform
+    for (const [key, value] of Object.entries(args)) {
+      // Get the prefix for a transform, and add that and the value to the transform string
+      const { prefix, type } = transformArgs.get(key)
+
+      if (type === 'primary') transformations.push(`${prefix}-${value}`)
+      if (type === 'secondary') transformString.push(`${prefix}-${value}`)
+    }
+
     // Concat all transforms with the tr: prefix
-    if (transformations.length) transformString.push(`tr:${transformations.join(',')}`)
+    if (transformations.length) transformString.unshift(`tr:${transformations.join(',')}`)
 
-    // Cropping
-    if (crop) transformString.push(`c-${crop}`)
-    if (cropMode) transformString.push(`cm-${cropMode}`)
-    if (focus) transformString.push(`fo-${focus}`)
-
-    // Format
-    if (format) transformString.push(`f-${format}`)
-    if (progressive) transformString.push(`pr-${progressive}`)
-
+    // Return all our joined transforms
     return `${cdn.baseUrl}${transformString.length ? `/${transformString.join(',')}` : ''}${cdn.imagePrefix || ''}${sourceUrl}`
   },
 
@@ -166,6 +175,7 @@ const imageKitTransformer = {
 
 const cloudinaryTransformer = {
   transformer: ({ cdn, sourceUrl, args }) => {
+    // Create a map of all available transforms, and their prefixes
     const transformArgs = new Map([
       ['width', { prefix: 'w' }],
       ['height', { prefix: 'h' }],
