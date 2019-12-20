@@ -2,7 +2,7 @@
 
 > A plugin to help you use an image CDN with Gridsome.
 
-This plugin enables you to add an image CDN to your site (e.g. [ImageKit](https://imagekit.io), [Cloudinary](https://cloudinary.com), [Sirv](https://sirv.com)) and easily use the CDN transform parameters in your GraphQL query. For example, using [ImageKit](https://imagekit.io) (and `@gridsome/source-graphql`):
+This plugin enables you to add an image CDN to your site (e.g. [ImageKit](https://imagekit.io), [Cloudinary](https://cloudinary.com), [Sirv](https://sirv.com)) and easily set the available transform parameters in your GraphQL query. For example, using [ImageKit](https://imagekit.io) (and `@gridsome/source-graphql`):
 
 ```graphql
 {
