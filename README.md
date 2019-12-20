@@ -155,7 +155,7 @@ query {
           cropMode: RESIZE,
           quality: 85
           format: AUTO
-        ) # [https://ik.imagekit.io/travis/wordpress/tr:w-600,h-400,q-85,c-maintain_ratio,cm-resize,f-auto/wp-content/uploads/2013/03/featured-image-horizontal.jpg](https://ik.imagekit.io/travis/wordpress/tr:w-600,h-400,q-85,c-maintain_ratio,cm-resize,f-auto/wp-content/uploads/2013/03/featured-image-horizontal.jpg)
+        ) # https://ik.imagekit.io/travis/wordpress/tr:w-600,h-400,q-85,c-maintain_ratio,cm-resize,f-auto/wp-content/uploads/2013/03/featured-image-horizontal.jpg
       }
     }
   }
@@ -206,7 +206,7 @@ query {
           height: 400
           crop: CROP,
           quality: "auto"
-        ) # [https://res.cloudinary.com/travis/w_600,h_400,c_crop,q_auto/wp-graphql/wp-content/uploads/2013/03/featured-image-horizontal.jpg](https://res.cloudinary.com/travis/w_600,h_400,c_crop,q_auto/wp-graphql/wp-content/uploads/2013/03/featured-image-horizontal.jpg)
+        ) # https://res.cloudinary.com/travis/w_600,h_400,c_crop,q_auto/wp-graphql/wp-content/uploads/2013/03/featured-image-horizontal.jpg
       }
     }
   }
