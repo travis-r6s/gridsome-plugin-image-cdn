@@ -1,7 +1,7 @@
 {
-  "name": "gridsome-plugin-cdn-images",
+  "name": "gridsome-plugin-image-cdn",
   "version": "0.1.0",
-  "description": "CDN Images plugin for Gridsome, allowing you to add image query params with GraphQL.",
+  "description": "Image CDN plugin for Gridsome, allowing you to add image query params with GraphQL.",
   "main": "gridsome.server.js",
   "author": {
     "email": "travis@travisreynolds.dev",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/thetre97/gridsome-plugin-cdn-images.git"
+    "url": "https://github.com/thetre97/gridsome-plugin-image-cdn.git"
   },
   "license": "MIT",
   "keywords": [

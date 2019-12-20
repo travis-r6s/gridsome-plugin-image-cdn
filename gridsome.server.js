@@ -1,5 +1,5 @@
 
-function CDNImages (api, options) {
+function ImageCDN (api, options) {
   // Destructure plugin options
   const { site, cdn, types } = options
 
@@ -200,7 +200,7 @@ const imageKitTransformer = {
   })
 }
 
-module.exports = CDNImages
+module.exports = ImageCDN
 
 module.exports.defaultOptions = () => ({
   types: []
