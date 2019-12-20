@@ -27,7 +27,7 @@ const imageKitTransformer = {
 
     // Loop through each argument, and add the respective transform
     for (const [key, value] of Object.entries(args)) {
-      // Get the prefix for a transform, and add that and the value to the transform string
+      // Get the prefix for a transform, and add that and the value to the relevant transform string
       const { prefix, type } = transformArgs.get(key)
 
       if (type === 'primary') transformations.push(`${prefix}-${value}`)
