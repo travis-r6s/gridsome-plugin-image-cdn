@@ -82,17 +82,19 @@ This plugin supports three main CDN providers out of the box - [ImageKit](https:
 All of these allow remote file support, so you can use them in front of a headless WordPress site, or S3 bucket for example.
 
 `imageKit`
+
 | Options | Explanantion | Example |
 |---------|--------------|---------|
 | baseUrl | The base URL/image URL endpoint from your configured ImageKit source. | `https://ik.imagekit.io/<ImageKit ID>/<ImageKit Endpoint Identifier>` |
-| preset | 'imageKit' | |
+| preset | `imageKit` | |
 | imagePrefix | Not needed for ImageKit. | |
 
 `cloudinary`
+
 | Options | Explanantion | Example |
 |---------|--------------|---------|
 | baseUrl | The base URL of your Cloudinary account - this will be show as 'Secure delivery URL:' in your account dashboard. | `https://res.cloudinary.com/<your account>` |
-| preset | 'cloudinary' | |
+| preset | `cloudinary` | |
 | imagePrefix | If pulling from a remote source, and your images go into a folder, you will probably need to add that prefix here (make sure to include a leading slash). | '/some-folder' |
 
 ### Examples
@@ -153,7 +155,7 @@ query {
           cropMode: RESIZE,
           quality: 85
           format: AUTO
-        ) # [https://ik.imagekit.io/travis/wordpress/tr:w-600,h-400,q-85,c-maintain_ratio,cm-resize,f-auto/wp-content/uploads/2013/03/featured-image-horizontal.jpg](https://ik.imagekit.io/travis/wordpress/tr:w-600,h-400,q-85,c-maintain_ratio,cm-resize,f-auto/wp-content/uploads/2013/03/featured-image-horizontal.jpg)
+        ) # https://ik.imagekit.io/travis/wordpress/tr:w-600,h-400,q-85,c-maintain_ratio,cm-resize,f-auto/wp-content/uploads/2013/03/featured-image-horizontal.jpg
       }
     }
   }
@@ -204,7 +206,7 @@ query {
           height: 400
           crop: CROP,
           quality: "auto"
-        ) # [https://res.cloudinary.com/travis/w_600,h_400,c_crop,q_auto/wp-graphql/wp-content/uploads/2013/03/featured-image-horizontal.jpg](https://res.cloudinary.com/travis/w_600,h_400,c_crop,q_auto/wp-graphql/wp-content/uploads/2013/03/featured-image-horizontal.jpg)
+        ) # https://res.cloudinary.com/travis/w_600,h_400,c_crop,q_auto/wp-graphql/wp-content/uploads/2013/03/featured-image-horizontal.jpg
       }
     }
   }
