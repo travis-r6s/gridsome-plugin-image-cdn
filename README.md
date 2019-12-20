@@ -128,13 +128,23 @@ These examples assume a setup using the [Gridsome Source GraphQL](https://gridso
   }
 }
 ```
-```graphql
-{
+```vue
+<template>
+  <Layout>
+    <div class="section">
+      <h1>{{ this.$page.WordPress.post.title }}
+      <img :src="this.$page.WordPress.post.featuredImage.sourceUrl" :alt="this.$page.WordPress.post.featuredImage.altText" />
+    </div>
+  </Layout>
+</template>
+
+<page-query>
+query {
   WordPress {
     post (id: "cG9zdDoxMDEx") {
       id
       title
-      cover: featuredImage {
+      featuredImage {
         altText
         sourceUrl(
           width: 600
@@ -148,6 +158,7 @@ These examples assume a setup using the [Gridsome Source GraphQL](https://gridso
     }
   }
 }
+</page-query>
 ```
 
 `cloudinary`
@@ -198,4 +209,62 @@ These examples assume a setup using the [Gridsome Source GraphQL](https://gridso
     }
   }
 }
+```
+
+## Lazy Load
+
+You could easily use this plugin with some Vue lazy load plugins by making use of GraphQL aliases - for example, with [`v-lazy-image`](https://github.com/alexjoverm/v-lazy-image) (using `imageKit`):
+
+```vue
+<template>
+  <Layout>
+    <div class="section">
+      <h1>{{ this.$page.WordPress.post.title }}
+      <v-lazy-image
+        :src="this.$page.WordPress.post.featuredImage.sourceUrl"
+        :src-placeholder="this.$page.WordPress.post.featuredImage.placeholder"
+        :alt="this.$page.WordPress.post.featuredImage.altText" />
+    </div>
+  </Layout>
+</template>
+
+<script>
+import VLazyImage from 'v-lazy-image'
+export default {
+  components: {
+    VLazyImage
+  }
+}
+</script>
+
+<page-query>
+query {
+  WordPress {
+    post (id: "cG9zdDoxMDEx") {
+      id
+      title
+      featuredImage {
+        altText
+        sourceUrl(
+          width: 800
+          height: 600
+          crop: MAINTAIN,
+          cropMode: RESIZE,
+          quality: 85
+          format: AUTO
+        )
+        placeholder: sourceUrl(
+          width: 200
+          height: 100
+          crop: MAINTAIN,
+          cropMode: RESIZE,
+          quality: 40
+          blur: 20
+          format: AUTO
+        )
+      }
+    }
+  }
+}
+</page-query>
 ```
