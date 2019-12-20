@@ -270,3 +270,79 @@ query {
 }
 </page-query>
 ```
+
+## Custom Transformer
+
+This plugin uses a transformer function to convert query arguments into query parameters a CDN uses. You can add a custom transformer (along with custom query arguments) by using the `transformer` option in `gridsome.config.js`. Below is an explanation of what this option needs:
+
+The `transformer` option takes in a object, containing three functions - `createSchemaTypes`, `createResolverArgs`, and `transformer`.
+
+### `createSchemaTypes`
+
+`createSchemaTypes` will receive a single argument - `schema`. Use this to add any custom Enums your arguments may use. For example:
+
+```js
+...
+createSchemaTypes: schema => [
+  schema.createEnumType({
+    name: 'ImageCDNCrop',
+    values: {
+      MAINTAIN: {
+        value: 'maintain_ratio'
+      },
+      FORCE: {
+        value: 'force'
+      },
+      ...
+    }
+  })
+],
+...
+```
+
+### `createResolverArgs`
+
+`createResolverArgs` has no arguments, and should simply return an object, containing all image arguments (parameters):
+
+```js
+...
+createResolverArgs: () => ({
+  width: 'Int',
+  height: 'Int',
+  quality: 'Int',
+  crop: 'ImageCDNCrop' // The custom Enum we created above
+})
+...
+```
+
+### `transformer`
+
+`transformer` will receive an object containing three keys - `cdn` (from config options), `sourceUrl` (the bare image URL), and `args` (the arguments from the current query), and should return a string. These arguments can all be used to generate a transform url, for example:
+
+```js
+...
+transformer: ({ cdn, sourceUrl, args }) => {
+  // Create a map of all available transforms, their prefixes, and the type
+  const transformArgs = new Map([
+    ['height', { prefix: 'h' }],
+    ['width', { prefix: 'w' }],
+    ['quality', { prefix: 'q' }],
+    ['crop', { prefix: 'c' }]
+  ])
+
+  // Create an empty array we can push transformations to
+  const transformations = []
+
+  // Loop through each argument, and set the respective transform
+  for (const [key, value] of Object.entries(args)) {
+    // Get the prefix for a transform, and add that and the value to the transform array
+    const { prefix } = transformArgs.get(key)
+    transformations.push(`${prefix}-${value}`) // e.g. 'w-400', 'q-85'
+  }
+
+  // Concat and return all our joined transforms
+  const transformUrl = transformations.length ? `/${transformations.join(',')}` : '' // e.g. /w-400,q-85
+  return `${cdn.baseUrl}${transformUrl}${sourceUrl}`
+},
+...
+```
