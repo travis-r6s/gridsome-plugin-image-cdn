@@ -1,5 +1,5 @@
 const imageKitTransformer = {
-  transformer: ({ cdnUrl, sourceUrl, args }) => {
+  transformer: ({ cdn, sourceUrl, args }) => {
     const { height, width, quality = '85', progressive = true, crop, cropMode, format = 'auto', focus, blur, trimEdges, rotate, radius, grayscale, contrast, sharpen } = args
     const transformString = []
 
@@ -27,7 +27,7 @@ const imageKitTransformer = {
     if (format) transformString.push(`f-${format}`)
     if (progressive) transformString.push(`pr-${progressive}`)
 
-    return `${cdnUrl}${transformString.length ? `/${transformString.join(',')}` : ''}${sourceUrl}`
+    return `${cdn.baseUrl}${transformString.length ? `/${transformString.join(',')}` : ''}${cdn.imagePrefix || ''}${sourceUrl}`
   },
 
   createSchemaTypes: schema => [
