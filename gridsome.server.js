@@ -19,8 +19,9 @@ function ImageCDN (api, options) {
           [ sourceField ]: {
             // Add configured resolver args
             args: createResolverArgs() || {},
-            resolve: (parent, args) => {
-              const sourceUrl = parent[ sourceField ].replace(site.baseUrl, '')
+            resolve: (parent, args, ctx, info) => {
+              // Get the sourceUrl, using the path key in case of an alias.
+              const sourceUrl = parent[ info.path.key ].replace(site.baseUrl, '')
 
               // If no transformer is configure, ignore it and return the opiginal url
               if (!transformer) return sourceUrl
