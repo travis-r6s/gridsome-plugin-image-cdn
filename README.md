@@ -322,7 +322,7 @@ createResolverArgs: () => ({
 ```js
 ...
 transformer: ({ cdn, sourceUrl, args }) => {
-  // Create a map of all available transforms, their prefixes, and the type
+  // Create a map of all available transforms, and their prefixes
   const transformArgs = new Map([
     ['height', { prefix: 'h' }],
     ['width', { prefix: 'w' }],
