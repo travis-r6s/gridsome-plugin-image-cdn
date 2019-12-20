@@ -7,7 +7,7 @@ function CDNImages (api, options) {
   const transformers = new Map([['imageKit', imageKitTransformer]])
 
   // Get the configured transformer using either an option preset, or a custom transformer
-  const { createSchemaTypes, createResolverArgs, transformer } = cdn.preset ? transformers.get(cdn.preset)() : cdn.transformer
+  const { createSchemaTypes, createResolverArgs, transformer } = cdn.preset ? transformers.get(cdn.preset) : cdn.transformer
 
   api.loadSource(({ addSchemaTypes, schema, addSchemaResolvers }) => {
     // Create and add custom cdn schema types - i.e. width, heigh, crop mode
@@ -36,8 +36,8 @@ function CDNImages (api, options) {
   })
 }
 
-function imageKitTransformer () {
-  function transformer ({ cdnUrl, sourceUrl, args }) {
+const imageKitTransformer = {
+  transformer: ({ cdnUrl, sourceUrl, args }) => {
     const { height, width, quality = '85', progressive = true, crop, cropMode, format, focus, blur, trimEdges, rotate, radius, grayscale, contrast, sharpen } = args
     const transformString = []
 
@@ -66,149 +66,138 @@ function imageKitTransformer () {
     if (progressive) transformString.push(`pr-${progressive}`)
 
     return `${cdnUrl}${transformString.length ? `/${transformString.join(',')}` : ''}${sourceUrl}`
-  }
+  },
 
-  function createSchemaTypes (schema) {
-    return [
-      schema.createEnumType({
-        name: 'CDNImageCrop',
-        values: {
-          MAINTAIN: {
-            value: 'maintain_ratio'
-          },
-          FORCE: {
-            value: 'force'
-          },
-          AT_LEAST: {
-            value: 'at_least'
-          },
-          AT_MAX: {
-            value: 'at_max'
-          }
+  createSchemaTypes: schema => [
+    schema.createEnumType({
+      name: 'CDNImageCrop',
+      values: {
+        MAINTAIN: {
+          value: 'maintain_ratio'
+        },
+        FORCE: {
+          value: 'force'
+        },
+        AT_LEAST: {
+          value: 'at_least'
+        },
+        AT_MAX: {
+          value: 'at_max'
         }
-      }),
-      schema.createEnumType({
-        name: 'CDNImageCropMode',
-        values: {
-          RESIZE: {
-            value: 'resize'
-          },
-          EXTRACT: {
-            value: 'extract'
-          },
-          PAD_EXTRACT: {
-            value: 'pad_extract'
-          },
-          PAD_RESIZE: {
-            value: 'pad_resize'
-          }
+      }
+    }),
+    schema.createEnumType({
+      name: 'CDNImageCropMode',
+      values: {
+        RESIZE: {
+          value: 'resize'
+        },
+        EXTRACT: {
+          value: 'extract'
+        },
+        PAD_EXTRACT: {
+          value: 'pad_extract'
+        },
+        PAD_RESIZE: {
+          value: 'pad_resize'
         }
-      }),
-      schema.createEnumType({
-        name: 'CDNImageRotate',
-        values: {
-          _0: {
-            value: 0
-          },
-          _90: {
-            value: 90
-          },
-          _180: {
-            value: 180
-          },
-          _270: {
-            value: 270
-          },
-          _360: {
-            value: 360
-          },
-          auto: {}
+      }
+    }),
+    schema.createEnumType({
+      name: 'CDNImageRotate',
+      values: {
+        _0: {
+          value: 0
+        },
+        _90: {
+          value: 90
+        },
+        _180: {
+          value: 180
+        },
+        _270: {
+          value: 270
+        },
+        _360: {
+          value: 360
+        },
+        auto: {}
+      }
+    }),
+    schema.createEnumType({
+      name: 'CDNImageFormat',
+      values: {
+        AUTO: {
+          value: 'auto'
+        },
+        WEBP: {
+          value: 'webp'
+        },
+        JPG: {
+          value: 'jpg'
+        },
+        JPEG: {
+          value: 'jpeg'
+        },
+        PNG: {
+          value: 'png'
         }
-      }),
-      schema.createEnumType({
-        name: 'CDNImageFormat',
-        values: {
-          AUTO: {
-            value: 'auto'
-          },
-          WEBP: {
-            value: 'webp'
-          },
-          JPG: {
-            value: 'jpg'
-          },
-          JPEG: {
-            value: 'jpeg'
-          },
-          PNG: {
-            value: 'png'
-          }
+      }
+    }),
+    schema.createEnumType({
+      name: 'CDNImageFocus',
+      values: {
+        AUTO: {
+          value: 'auto'
+        },
+        CENTER: {
+          value: 'center'
+        },
+        TOP: {
+          value: 'top'
+        },
+        LEFT: {
+          value: 'left'
+        },
+        BOTTOM: {
+          value: 'bottom'
+        },
+        RIGHT: {
+          value: 'right'
+        },
+        TOP_LEFT: {
+          value: 'top_left'
+        },
+        TOP_RIGHT: {
+          value: 'top_right'
+        },
+        BOTTOM_LEFT: {
+          value: 'bottom_left'
+        },
+        BOTTOM_RIGHT: {
+          value: 'bottom_right'
         }
-      }),
-      schema.createEnumType({
-        name: 'CDNImageFocus',
-        values: {
-          AUTO: {
-            value: 'auto'
-          },
-          CENTER: {
-            value: 'center'
-          },
-          TOP: {
-            value: 'top'
-          },
-          LEFT: {
-            value: 'left'
-          },
-          BOTTOM: {
-            value: 'bottom'
-          },
-          RIGHT: {
-            value: 'right'
-          },
-          TOP_LEFT: {
-            value: 'top_left'
-          },
-          TOP_RIGHT: {
-            value: 'top_right'
-          },
-          BOTTOM_LEFT: {
-            value: 'bottom_left'
-          },
-          BOTTOM_RIGHT: {
-            value: 'bottom_right'
-          }
-        }
-      })
-    ]
-  }
+      }
+    })
+  ],
 
-  function createResolverArgs () {
-    return {
-      width: 'Int',
-      height: 'Int',
-      quality: 'Int',
-      progressive: 'Boolean',
-      crop: 'CDNImageCrop',
-      cropMode: 'CDNImageCropMode',
-      format: 'CDNImageFormat',
-      focus: 'CDNImageFocus',
-      blur: 'Int',
-      trimEdges: 'Int',
-      rotate: 'CDNImageRotate',
-      radius: 'String',
-      grayscale: 'Boolean',
-      contrast: 'Boolean',
-      sharpen: 'Boolean'
-
-    }
-  }
-
-  return {
-    transformer,
-    createSchemaTypes,
-    createResolverArgs
-  }
+  createResolverArgs: () => ({
+    width: 'Int',
+    height: 'Int',
+    quality: 'Int',
+    progressive: 'Boolean',
+    crop: 'CDNImageCrop',
+    cropMode: 'CDNImageCropMode',
+    format: 'CDNImageFormat',
+    focus: 'CDNImageFocus',
+    blur: 'Int',
+    trimEdges: 'Int',
+    rotate: 'CDNImageRotate',
+    radius: 'String',
+    grayscale: 'Boolean',
+    contrast: 'Boolean',
+    sharpen: 'Boolean'
+  })
 }
 
 module.exports = CDNImages
