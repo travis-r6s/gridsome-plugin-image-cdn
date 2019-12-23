@@ -1,3 +1,4 @@
+const get = require('lodash.get')
 const transformers = require('./transformers')
 
 function ImageCDN (api, options) {
@@ -13,18 +14,31 @@ function ImageCDN (api, options) {
     addSchemaTypes(schemaTypes)
 
     // For each configured typeName, update the sourceField to include the cdn options
-    for (const { typeName, sourceField } of types) {
+    for (const { typeName, sourceField, sourceFieldPath } of types) {
+      // Set the parent resolver typeName, and the child path (when using a nested object) if required
+      const [parentType, childPath] = sourceFieldPath ? sourceFieldPath.split('.') : [sourceField]
+
       addSchemaResolvers({
         [ typeName ]: {
-          [ sourceField ]: {
+          [ parentType ]: {
             // Add configured resolver args
             args: createResolverArgs() || {},
             resolve: (parent, args, ctx, info) => {
-              // Get the sourceUrl, using the path key in case of an alias.
-              const sourceUrl = parent[ info.path.key ].replace(site.baseUrl, '')
+              // Get the sourceUrl, using the full source path or the path key in case of an alias.
+              const sourceUrl = get(parent, sourceFieldPath || info.path.key).replace(site.baseUrl, '')
 
-              // If no transformer is configure, ignore it and return the opiginal url
+              // If no transformer is configure, ignore it and return the original url
               if (!transformer) return sourceUrl
+
+              // If we have a nested object, then return the parent object with the child path key
+              if (childPath) {
+                const transformedSrc = transformer({ cdn, sourceUrl, args })
+                return {
+                  ...parent[ parentType ],
+                  [ childPath ]: transformedSrc
+                }
+              }
+
               // Otherwise handoff to the transformer
               return transformer({ cdn, sourceUrl, args })
             }
