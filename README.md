@@ -1,4 +1,4 @@
-# gridsome-plugin-cdn-images
+# gridsome-plugin-image-cdn
 
 > A plugin to help you use an image CDN with Gridsome.
 
@@ -30,8 +30,8 @@ This plugin enables you to add an image CDN to your site (e.g. [ImageKit](https:
 ## Install
 
 ```
-yarn add gridsome-plugin-cdn-images # or
-npm install gridsome-plugin-cdn-images
+yarn add gridsome-plugin-image-cdn # or
+npm install gridsome-plugin-image-cdn
 ```
 
 ## Usage
@@ -41,7 +41,7 @@ npm install gridsome-plugin-cdn-images
 module.exports = {
   plugins: [
     {
-      use: 'gridsome-plugin-cdn-images',
+      use: 'gridsome-plugin-image-cdn',
       options: {
         site: {
           baseUrl: '<URL of your site>'
@@ -112,7 +112,7 @@ These examples assume a setup using the [Gridsome Source GraphQL](https://gridso
   }
 },
 {
-  use: 'gridsome-plugin-cdn-images',
+  use: 'gridsome-plugin-image-cdn',
   options: {
     site: {
       baseUrl: 'https://demo.wpgraphql.com'
@@ -174,7 +174,7 @@ query {
   }
 },
 {
-  use: 'gridsome-plugin-cdn-images',
+  use: 'gridsome-plugin-image-cdn',
   options: {
     site: {
       baseUrl: 'https://demo.wpgraphql.com'
