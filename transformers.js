@@ -370,7 +370,87 @@ const cloudinaryTransformer = {
   })
 }
 
+const sirvTransformer = {
+  // Create a map of all available transforms, their prefixes, and the type
+  transformArgs: new Map([
+    ['height', { prefix: 'h', arg: { type: 'Int' } }],
+    ['width', { prefix: 'w', arg: { type: 'Int' } }],
+    ['scale', { prefix: 'scale', arg: { type: 'enum', name: 'Scale', values: ['fit', 'fill', 'ignore', 'noup'] } }],
+    ['rotate', { prefix: 'rotate', arg: { type: 'Int' } }],
+    ['opacity', { prefix: 'opacity', arg: { type: 'Int' } }],
+    ['brightness', { prefix: 'brightness', arg: { type: 'Int' } }],
+    ['contrast', { prefix: 'contrast', arg: { type: 'Int' } }],
+    ['exposure', { prefix: 'exposure', arg: { type: 'Int' } }],
+    ['hue', { prefix: 'hue', arg: { type: 'Int' } }],
+    ['saturation', { prefix: 'saturation', arg: { type: 'Int' } }],
+    ['lightness', { prefix: 'lightness', arg: { type: 'Int' } }],
+    ['shadows', { prefix: 'shadows', arg: { type: 'Int' } }],
+    ['highlights', { prefix: 'highlights', arg: { type: 'Int' } }],
+    ['colorLevelBlack', { prefix: 'colorlevel.black', arg: { type: 'Int' } }],
+    ['colorLevelWhite', { prefix: 'colorlevel.white', arg: { type: 'Int' } }],
+    ['histogram', { prefix: 'histogram', arg: { type: 'String' } }],
+    ['grayscale', { prefix: 'grayscale', arg: { type: 'Boolean' } }],
+    ['blur', { prefix: 'blur', arg: { type: 'Int' } }],
+    ['sharpen', { prefix: 'sharpen', arg: { type: 'Int' } }],
+    ['colorizeColor', { prefix: 'colorize.color', arg: { type: 'String' } }],
+    ['colorizeOpacity', { prefix: 'colorize.opacity', arg: { type: 'Int' } }],
+    ['colortone', { prefix: 'colortone', arg: { type: 'enum', name: 'Colortone', values: ['sepia', 'warm', 'cold', 'sunset', 'purpletan', 'texas', 'aurora', 'blackberry', 'coffee', 'clearwater', 'dusk', 'stereo', 'none'] } }],
+    ['colortoneColor', { prefix: 'colortone.color', arg: { type: 'String' } }],
+    ['colortoneLevel', { prefix: 'colortone.level', arg: { type: 'Int' } }],
+    ['colortoneMode', { prefix: 'colortone.mode', arg: { type: 'enum', name: 'ColortoneMode', values: ['solid', 'highlights', 'shadows'] } }],
+    ['vignetteValue', { prefix: 'vignette.value', arg: { type: 'Int' } }],
+    ['vignetteColor', { prefix: 'vignette.color', arg: { type: 'String' } }],
+    ['format', { prefix: 'format', arg: { type: 'enum', name: 'Format', values: ['jpg', 'png', 'webp', 'optimal', 'original'] } }],
+    ['webpFallback', { prefix: 'webp.fallback', arg: { type: 'enum', name: 'WebpFallback', values: ['jpg', 'png'] } }],
+    ['quality', { prefix: 'q', arg: { type: 'Int' } }],
+    ['progressive', { prefix: 'progressive', arg: { type: 'Boolean' } }],
+    ['subsampling', { prefix: 'subsampling', arg: { type: 'String' } }],
+    ['pngOptimize', { prefix: 'png.optimize', arg: { type: 'Boolean' } }],
+    ['filter', { prefix: 'filter', arg: { type: 'String' } }],
+    ['cropWidth', { prefix: 'cw', arg: { type: 'Int' } }],
+    ['cropHeight', { prefix: 'ch', arg: { type: 'Int' } }],
+    ['cropX', { prefix: 'cx', arg: { type: 'Int' } }],
+    ['cropY', { prefix: 'cy', arg: { type: 'Int' } }],
+    ['autocrop', { prefix: 'autocrop', arg: { type: 'Boolean' } }],
+    ['thumbnail', { prefix: 'thumbnail', arg: { type: 'Int' } }]
+  ]),
+  transformer: ({ cdn, sourceUrl, args }) => {
+    const transformations = new URLSearchParams()
+
+    for (const [key, value] of Object.entries(args)) {
+      const { prefix } = sirvTransformer.transformArgs.get(key)
+      transformations.append(prefix, value)
+    }
+
+    // Return all our joined transforms
+    return `${cdn.baseUrl}${cdn.imagePrefix || ''}${sourceUrl}?${transformations.toString()}`
+  },
+  createSchemaTypes: schema => {
+    const enums = []
+
+    // eslint-disable-next-line no-unused-vars
+    for (const [name, options] of sirvTransformer.transformArgs) {
+      if (options.arg.type === 'enum') enums.push(options.arg)
+    }
+
+    return enums.map(({ name, values }) => schema.createEnumType({
+      name: `SirvImage${name}`,
+      values: Object.fromEntries(values.map(value => [value.toUpperCase(), { value }]))
+    }))
+  },
+  createResolverArgs: () => {
+    const args = []
+
+    for (const [name, options] of sirvTransformer.transformArgs) {
+      const type = options.arg.type === 'enum' ? `SirvImage${options.arg.name}` : options.arg.type
+      args.push([name, type])
+    }
+    return Object.fromEntries(args)
+  }
+}
+
 module.exports = {
   imageKit: imageKitTransformer,
-  cloudinary: cloudinaryTransformer
+  cloudinary: cloudinaryTransformer,
+  sirv: sirvTransformer
 }
