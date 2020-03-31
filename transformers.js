@@ -1,26 +1,25 @@
 const path = require('path')
 
 const imageKitTransformer = {
+  // Create a map of all available transforms, their prefixes, and the type
+  transformArgs: new Map([
+    ['height', { prefix: 'h', type: 'primary', arg: { type: 'Int' } }],
+    ['width', { prefix: 'w', type: 'primary', arg: { type: 'Int' } }],
+    ['rotate', { prefix: 'rt', type: 'primary', arg: { type: 'Int' } }],
+    ['quality', { prefix: 'q', type: 'primary', arg: { type: 'Int' } }],
+    ['blur', { prefix: 'bl', type: 'primary', arg: { type: 'Int' } }],
+    ['trimEdges', { prefix: 't', type: 'primary', arg: { type: 'Int' } }],
+    ['radius', { prefix: 'r', type: 'primary', arg: { type: 'String' } }],
+    ['grayscale', { prefix: 'e-grayscale', type: 'primary', arg: { type: 'Boolean' } }],
+    ['contrast', { prefix: 'e-contrast', type: 'primary', arg: { type: 'Boolean' } }],
+    ['sharpen', { prefix: 'e-sharpen', type: 'primary', arg: { type: 'Boolean' } }],
+    ['crop', { prefix: 'c', type: 'secondary', arg: { type: 'enum', name: 'Crop', values: ['maintain_ratio', 'force', 'at_least', 'at_max'] } }],
+    ['cropMode', { prefix: 'cm', type: 'secondary', arg: { type: 'enum', name: 'CropMode', values: ['resize', 'extract', 'pad_extract', 'pad_resize'] } }],
+    ['focus', { prefix: 'fo', type: 'secondary', arg: { type: 'enum', name: 'Focus', values: ['auto', 'center', 'top', 'left', 'bottom', 'right', 'top_left', 'top_right', 'bottom_left', 'bottom_right'] } }],
+    ['format', { prefix: 'f', type: 'secondary', arg: { type: 'enum', name: 'Format', values: ['auto', 'webp', 'jpg', 'jpeg', 'png'] } }],
+    ['progressive', { prefix: 'pr', type: 'secondary' }]
+  ]),
   transformer: ({ cdn, sourceUrl, args }) => {
-    // Create a map of all available transforms, their prefixes, and the type
-    const transformArgs = new Map([
-      ['height', { prefix: 'h', type: 'primary' }],
-      ['width', { prefix: 'w', type: 'primary' }],
-      ['rotate', { prefix: 'rt', type: 'primary' }],
-      ['quality', { prefix: 'q', type: 'primary' }],
-      ['blur', { prefix: 'bl', type: 'primary' }],
-      ['trimEdges', { prefix: 't', type: 'primary' }],
-      ['radius', { prefix: 'r', type: 'primary' }],
-      ['grayscale', { prefix: 'e-grayscale', type: 'primary' }],
-      ['contrast', { prefix: 'e-contrast', type: 'primary' }],
-      ['sharpen', { prefix: 'e-sharpen', type: 'primary' }],
-      ['crop', { prefix: 'c', type: 'secondary' }],
-      ['cropMode', { prefix: 'cm', type: 'secondary' }],
-      ['focus', { prefix: 'fo', type: 'secondary' }],
-      ['format', { prefix: 'f', type: 'secondary' }],
-      ['progressive', { prefix: 'pr', type: 'secondary' }]
-    ])
-
     // We have two types (or levels) of transformations, so we need to seperate into two seperate strings, then join later
     const transformations = []
     const transformString = []
@@ -28,7 +27,7 @@ const imageKitTransformer = {
     // Loop through each argument, and add the respective transform
     for (const [key, value] of Object.entries(args)) {
       // Get the prefix for a transform, and add that and the value to the relevant transform string
-      const { prefix, type } = transformArgs.get(key)
+      const { prefix, type } = imageKitTransformer.transformArgs.get(key)
 
       if (type === 'primary') transformations.push(`${prefix}-${value}`)
       if (type === 'secondary') transformString.push(`${prefix}-${value}`)
@@ -40,166 +39,56 @@ const imageKitTransformer = {
     // Return all our joined transforms
     return `${cdn.baseUrl}${transformString.length ? `/${transformString.join(',')}` : ''}${cdn.imagePrefix || ''}${sourceUrl}`
   },
+  createSchemaTypes: schema => {
+    const enums = []
 
-  createSchemaTypes: schema => [
-    schema.createEnumType({
-      name: 'ImageCDNCrop',
-      values: {
-        MAINTAIN: {
-          value: 'maintain_ratio'
-        },
-        FORCE: {
-          value: 'force'
-        },
-        AT_LEAST: {
-          value: 'at_least'
-        },
-        AT_MAX: {
-          value: 'at_max'
-        }
-      }
-    }),
-    schema.createEnumType({
-      name: 'ImageCDNCropMode',
-      values: {
-        RESIZE: {
-          value: 'resize'
-        },
-        EXTRACT: {
-          value: 'extract'
-        },
-        PAD_EXTRACT: {
-          value: 'pad_extract'
-        },
-        PAD_RESIZE: {
-          value: 'pad_resize'
-        }
-      }
-    }),
-    schema.createEnumType({
-      name: 'ImageCDNRotate',
-      values: {
-        _0: {
-          value: 0
-        },
-        _90: {
-          value: 90
-        },
-        _180: {
-          value: 180
-        },
-        _270: {
-          value: 270
-        },
-        _360: {
-          value: 360
-        },
-        auto: {}
-      }
-    }),
-    schema.createEnumType({
-      name: 'ImageCDNFormat',
-      values: {
-        AUTO: {
-          value: 'auto'
-        },
-        WEBP: {
-          value: 'webp'
-        },
-        JPG: {
-          value: 'jpg'
-        },
-        JPEG: {
-          value: 'jpeg'
-        },
-        PNG: {
-          value: 'png'
-        }
-      }
-    }),
-    schema.createEnumType({
-      name: 'ImageCDNFocus',
-      values: {
-        AUTO: {
-          value: 'auto'
-        },
-        CENTER: {
-          value: 'center'
-        },
-        TOP: {
-          value: 'top'
-        },
-        LEFT: {
-          value: 'left'
-        },
-        BOTTOM: {
-          value: 'bottom'
-        },
-        RIGHT: {
-          value: 'right'
-        },
-        TOP_LEFT: {
-          value: 'top_left'
-        },
-        TOP_RIGHT: {
-          value: 'top_right'
-        },
-        BOTTOM_LEFT: {
-          value: 'bottom_left'
-        },
-        BOTTOM_RIGHT: {
-          value: 'bottom_right'
-        }
-      }
-    })
-  ],
+    // eslint-disable-next-line no-unused-vars
+    for (const [name, options] of imageKitTransformer.transformArgs) {
+      if (options.arg.type === 'enum') enums.push(options.arg)
+    }
 
-  createResolverArgs: () => ({
-    width: 'Int',
-    height: 'Int',
-    quality: 'Int',
-    progressive: 'Boolean',
-    crop: 'ImageCDNCrop',
-    cropMode: 'ImageCDNCropMode',
-    format: 'ImageCDNFormat',
-    focus: 'ImageCDNFocus',
-    blur: 'Int',
-    trimEdges: 'Int',
-    rotate: 'ImageCDNRotate',
-    radius: 'String',
-    grayscale: 'Boolean',
-    contrast: 'Boolean',
-    sharpen: 'Boolean'
-  })
+    return enums.map(({ name, values }) => schema.createEnumType({
+      name: `ImageKitImage${name}`,
+      values: Object.fromEntries(values.map(value => [value.toUpperCase(), { value }]))
+    }))
+  },
+  createResolverArgs: () => {
+    const args = []
+
+    for (const [name, options] of imageKitTransformer.transformArgs) {
+      const type = options.arg.type === 'enum' ? `ImageKitImage${options.arg.name}` : options.arg.type
+      args.push([name, type])
+    }
+    return Object.fromEntries(args)
+  }
 }
 
 const cloudinaryTransformer = {
+  // Create a map of all available transforms, and their prefixes
+  transformArgs: new Map([
+    ['width', { prefix: 'w', arg: { type: 'Float' } }],
+    ['height', { prefix: 'h', arg: { type: 'Float' } }],
+    ['crop', { prefix: 'c', arg: { type: 'enum', name: 'Crop', values: ['fit', 'scale', 'limit', 'mfit', 'fill', 'lfill', 'pad', 'lpad', 'mpad', 'fill_pad', 'crop', 'thumb'] } }],
+    ['aspectRatio', { prefix: 'ar', arg: { type: 'String' } }],
+    ['gravity', { prefix: 'g', arg: { type: 'enum', name: 'Gravity', values: ['north_west', 'north', 'north_east', 'west', 'center', 'east', 'south_west', 'south', 'south_east', 'face', 'face:center', 'face:auto', 'faces:center', 'faces:auto', 'body', 'body:face', 'liquid', 'auto:subject', 'auto:classic'] } }],
+    ['zoom', { prefix: 'z', arg: { type: 'Float' } }],
+    ['x', { prefix: 'x', arg: { type: 'Float' } }],
+    ['y', { prefix: 'y', arg: { type: 'Float' } }],
+    ['fetchFormat', { prefix: 'f', arg: { type: 'enum', name: 'Format', values: ['auto', 'webp', 'jpg', 'jpeg', 'png'] } }],
+    ['fetchFormat', { prefix: 'f', arg: { type: 'enum', name: 'Format', values: ['auto', 'webp', 'jpg', 'jpeg', 'png'] } }],
+    ['quality', { prefix: 'q', arg: { type: 'String' } }],
+    ['radius', { prefix: 'r', arg: { type: 'String' } }],
+    ['angle', { prefix: 'a', arg: { type: 'String' } }],
+    ['effect', { prefix: 'e', arg: { type: 'String' } }],
+    ['opacity', { prefix: 'o', arg: { type: 'Int' } }],
+    ['border', { prefix: 'bo', arg: { type: 'String' } }],
+    ['background', { prefix: 'b', arg: { type: 'String' } }],
+    ['overlay', { prefix: 'l', arg: { type: 'String' } }],
+    ['underlay', { prefix: 'u', arg: { type: 'String' } }],
+    ['color', { prefix: 'co', arg: { type: 'String' } }],
+    ['transformation', { prefix: 'transformation', arg: { type: 'String' } }]
+  ]),
   transformer: ({ cdn, sourceUrl, args }) => {
-    // Create a map of all available transforms, and their prefixes
-    const transformArgs = new Map([
-      ['width', { prefix: 'w', arg: { type: 'Float' } }],
-      ['height', { prefix: 'h', arg: { type: 'Float' } }],
-      ['crop', { prefix: 'c', arg: { type: 'enum', name: 'Crop', values: ['fit', 'scale', 'limit', 'mfit', 'fill', 'lfill', 'pad', 'lpad', 'mpad', 'fill_pad', 'crop', 'thumb'] } }],
-      ['aspectRatio', { prefix: 'ar', arg: { type: 'String' } }],
-      ['gravity', { prefix: 'g', arg: { type: 'enum', name: 'Gravity', values: ['north_west', 'north', 'north_east', 'west', 'center', 'east', 'south_west', 'south', 'south_east', 'face', 'face:center', 'face:auto', 'faces:center', 'faces:auto', 'body', 'body:face', 'liquid', 'auto:subject', 'auto:classic'] } }],
-      ['zoom', { prefix: 'z', arg: { type: 'Float' } }],
-      ['x', { prefix: 'x', arg: { type: 'Float' } }],
-      ['y', { prefix: 'y', arg: { type: 'Float' } }],
-      ['fetchFormat', { prefix: 'f', arg: { type: 'enum', name: 'Format', values: ['auto', 'webp', 'jpg', 'jpeg', 'png'] } }],
-      ['fetchFormat', { prefix: 'f', arg: { type: 'enum', name: 'Format', values: ['auto', 'webp', 'jpg', 'jpeg', 'png'] } }],
-      ['quality', { prefix: 'q', arg: { type: 'String' } }],
-      ['radius', { prefix: 'r', arg: { type: 'String' } }],
-      ['angle', { prefix: 'a', arg: { type: 'String' } }],
-      ['effect', { prefix: 'e', arg: { type: 'String' } }],
-      ['opacity', { prefix: 'o', arg: { type: 'Int' } }],
-      ['border', { prefix: 'bo', arg: { type: 'String' } }],
-      ['background', { prefix: 'b', arg: { type: 'String' } }],
-      ['overlay', { prefix: 'l', arg: { type: 'String' } }],
-      ['underlay', { prefix: 'u', arg: { type: 'String' } }],
-      ['color', { prefix: 'co', arg: { type: 'String' } }],
-      ['transformation', { prefix: 'transformation', arg: { type: 'String' } }]
-    ])
-
     // If we have a named transformation, we can just return that in the url
     if (args.transformation) return `${cdn.baseUrl}/t_${args.transformation}${cdn.imagePrefix || ''}${sourceUrl}`
 
@@ -212,7 +101,7 @@ const cloudinaryTransformer = {
         sourceUrl = value !== 'auto' ? `${dir}/${name}.${value}` : sourceUrl
       } else {
         // Get the prefix for a transform, and add that and the value to the transform string
-        const { prefix } = transformArgs.get(key)
+        const { prefix } = cloudinaryTransformer.transformArgs.get(key)
         transformString.push(`${prefix}_${value}`)
       }
     }
@@ -224,7 +113,7 @@ const cloudinaryTransformer = {
     const enums = []
 
     // eslint-disable-next-line no-unused-vars
-    for (const [name, options] of sirvTransformer.transformArgs) {
+    for (const [name, options] of cloudinaryTransformer.transformArgs) {
       if (options.arg.type === 'enum') enums.push(options.arg)
     }
 
@@ -236,7 +125,7 @@ const cloudinaryTransformer = {
   createResolverArgs: () => {
     const args = []
 
-    for (const [name, options] of sirvTransformer.transformArgs) {
+    for (const [name, options] of cloudinaryTransformer.transformArgs) {
       const type = options.arg.type === 'enum' ? `CloudinaryImage${options.arg.name}` : options.arg.type
       args.push([name, type])
     }
