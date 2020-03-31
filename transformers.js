@@ -177,25 +177,27 @@ const cloudinaryTransformer = {
   transformer: ({ cdn, sourceUrl, args }) => {
     // Create a map of all available transforms, and their prefixes
     const transformArgs = new Map([
-      ['width', { prefix: 'w' }],
-      ['height', { prefix: 'h' }],
-      ['crop', { prefix: 'c' }],
-      ['aspectRatio', { prefix: 'ar' }],
-      ['gravity', { prefix: 'g' }],
-      ['zoom', { prefix: 'z' }],
-      ['x', { prefix: 'x' }],
-      ['y', { prefix: 'y' }],
-      ['fetchFormat', { prefix: 'f' }],
-      ['quality', { prefix: 'q' }],
-      ['radius', { prefix: 'r' }],
-      ['angle', { prefix: 'a' }],
-      ['effect', { prefix: 'e' }],
-      ['opacity', { prefix: 'o' }],
-      ['border', { prefix: 'bo' }],
-      ['background', { prefix: 'b' }],
-      ['overlay', { prefix: 'l' }],
-      ['underlay', { prefix: 'u' }],
-      ['color', { prefix: 'co' }]
+      ['width', { prefix: 'w', arg: { type: 'Float' } }],
+      ['height', { prefix: 'h', arg: { type: 'Float' } }],
+      ['crop', { prefix: 'c', arg: { type: 'enum', name: 'Crop', values: ['fit', 'scale', 'limit', 'mfit', 'fill', 'lfill', 'pad', 'lpad', 'mpad', 'fill_pad', 'crop', 'thumb'] } }],
+      ['aspectRatio', { prefix: 'ar', arg: { type: 'String' } }],
+      ['gravity', { prefix: 'g', arg: { type: 'enum', name: 'Gravity', values: ['north_west', 'north', 'north_east', 'west', 'center', 'east', 'south_west', 'south', 'south_east', 'face', 'face:center', 'face:auto', 'faces:center', 'faces:auto', 'body', 'body:face', 'liquid', 'auto:subject', 'auto:classic'] } }],
+      ['zoom', { prefix: 'z', arg: { type: 'Float' } }],
+      ['x', { prefix: 'x', arg: { type: 'Float' } }],
+      ['y', { prefix: 'y', arg: { type: 'Float' } }],
+      ['fetchFormat', { prefix: 'f', arg: { type: 'enum', name: 'Format', values: ['auto', 'webp', 'jpg', 'jpeg', 'png'] } }],
+      ['fetchFormat', { prefix: 'f', arg: { type: 'enum', name: 'Format', values: ['auto', 'webp', 'jpg', 'jpeg', 'png'] } }],
+      ['quality', { prefix: 'q', arg: { type: 'String' } }],
+      ['radius', { prefix: 'r', arg: { type: 'String' } }],
+      ['angle', { prefix: 'a', arg: { type: 'String' } }],
+      ['effect', { prefix: 'e', arg: { type: 'String' } }],
+      ['opacity', { prefix: 'o', arg: { type: 'Int' } }],
+      ['border', { prefix: 'bo', arg: { type: 'String' } }],
+      ['background', { prefix: 'b', arg: { type: 'String' } }],
+      ['overlay', { prefix: 'l', arg: { type: 'String' } }],
+      ['underlay', { prefix: 'u', arg: { type: 'String' } }],
+      ['color', { prefix: 'co', arg: { type: 'String' } }],
+      ['transformation', { prefix: 'transformation', arg: { type: 'String' } }]
     ])
 
     // If we have a named transformation, we can just return that in the url
@@ -218,156 +220,28 @@ const cloudinaryTransformer = {
     // Return all our joined transforms
     return `${cdn.baseUrl}${transformString.length ? `/${transformString.join(',')}` : ''}${cdn.imagePrefix || ''}${sourceUrl}`
   },
+  createSchemaTypes: schema => {
+    const enums = []
 
-  createSchemaTypes: schema => [
-    schema.createEnumType({
-      name: 'ImageCDNCrop',
-      values: {
-        SCALE: {
-          value: 'scale'
-        },
-        FIT: {
-          value: 'fit'
-        },
-        LIMIT: {
-          value: 'limit'
-        },
-        MFIT: {
-          value: 'mfit'
-        },
-        FILL: {
-          value: 'fill'
-        },
-        LFILL: {
-          value: 'lfill'
-        },
-        PAD: {
-          value: 'pad'
-        },
-        LPAD: {
-          value: 'lpad'
-        },
-        MPAD: {
-          value: 'mpad'
-        },
-        FILL_PAD: {
-          value: 'fill_pad'
-        },
-        CROP: {
-          value: 'crop'
-        },
-        THUMB: {
-          value: 'thumb'
-        }
-      }
-    }),
-    schema.createEnumType({
-      name: 'ImageCDNGravity',
-      values: {
-        NORTHWEST: {
-          value: 'north_west'
-        },
-        NORTH: {
-          value: 'north'
-        },
-        NORTHEAST: {
-          value: 'north_east'
-        },
-        WEST: {
-          value: 'west'
-        },
-        CENTER: {
-          value: 'center'
-        },
-        EAST: {
-          value: 'east'
-        },
-        SOUTHWEST: {
-          value: 'south_west'
-        },
-        SOUTH: {
-          value: 'south'
-        },
-        SOUTHEAST: {
-          value: 'south_east'
-        },
-        FACE: {
-          value: 'face'
-        },
-        FACE_CENTER: {
-          value: 'face:center'
-        },
-        FACE_AUTO: {
-          value: 'face:auto'
-        },
-        FACES_CENTER: {
-          value: 'faces:center'
-        },
-        FACES_AUTO: {
-          value: 'faces:auto'
-        },
-        BODY: {
-          value: 'body'
-        },
-        BODY_FACE: {
-          value: 'body:face'
-        },
-        LIQUID: {
-          value: 'liquid'
-        },
-        AUTO_SUBJECT: {
-          value: 'auto:subject'
-        },
-        AUTO_CLASSIC: {
-          value: 'auto:classic'
-        }
-      }
-    }),
-    schema.createEnumType({
-      name: 'ImageCDNFormat',
-      values: {
-        AUTO: {
-          value: 'auto'
-        },
-        WEBP: {
-          value: 'webp'
-        },
-        JPG: {
-          value: 'jpg'
-        },
-        JPEG: {
-          value: 'jpeg'
-        },
-        PNG: {
-          value: 'png'
-        }
-      }
-    })
-  ],
+    // eslint-disable-next-line no-unused-vars
+    for (const [name, options] of sirvTransformer.transformArgs) {
+      if (options.arg.type === 'enum') enums.push(options.arg)
+    }
 
-  createResolverArgs: () => ({
-    width: 'Float',
-    height: 'Float',
-    crop: 'ImageCDNCrop',
-    aspectRatio: 'String',
-    gravity: 'ImageCDNGravity',
-    zoom: 'Float',
-    x: 'Float',
-    y: 'Float',
-    format: 'ImageCDNFormat',
-    fetchFormat: 'ImageCDNFormat',
-    quality: 'String',
-    radius: 'String',
-    angle: 'String',
-    effect: 'String',
-    opacity: 'Int',
-    border: 'String',
-    background: 'String',
-    overlay: 'String',
-    underlay: 'String',
-    color: 'String',
-    transformation: 'String'
-  })
+    return enums.map(({ name, values }) => schema.createEnumType({
+      name: `CloudinaryImage${name}`,
+      values: Object.fromEntries(values.map(value => [value.toUpperCase(), { value }]))
+    }))
+  },
+  createResolverArgs: () => {
+    const args = []
+
+    for (const [name, options] of sirvTransformer.transformArgs) {
+      const type = options.arg.type === 'enum' ? `CloudinaryImage${options.arg.name}` : options.arg.type
+      args.push([name, type])
+    }
+    return Object.fromEntries(args)
+  }
 }
 
 const sirvTransformer = {
