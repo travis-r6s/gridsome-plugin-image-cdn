@@ -119,7 +119,7 @@ const cloudinaryTransformer = {
 
     return enums.map(({ name, values }) => schema.createEnumType({
       name: `CloudinaryImage${name}`,
-      values: Object.fromEntries(values.map(value => [value.toUpperCase(), { value }]))
+      values: Object.fromEntries(values.map(value => [value.toUpperCase().replace(':', '_'), { value }]))
     }))
   },
   createResolverArgs: () => {
