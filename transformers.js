@@ -17,7 +17,7 @@ const imageKitTransformer = {
     ['cropMode', { prefix: 'cm', type: 'secondary', arg: { type: 'enum', name: 'CropMode', values: ['resize', 'extract', 'pad_extract', 'pad_resize'] } }],
     ['focus', { prefix: 'fo', type: 'secondary', arg: { type: 'enum', name: 'Focus', values: ['auto', 'center', 'top', 'left', 'bottom', 'right', 'top_left', 'top_right', 'bottom_left', 'bottom_right'] } }],
     ['format', { prefix: 'f', type: 'secondary', arg: { type: 'enum', name: 'Format', values: ['auto', 'webp', 'jpg', 'jpeg', 'png'] } }],
-    ['progressive', { prefix: 'pr', type: 'secondary' }]
+    ['progressive', { prefix: 'pr', type: 'secondary', arg: { type: 'Boolean' } }]
   ]),
   transformer: ({ cdn, sourceUrl, args }) => {
     // We have two types (or levels) of transformations, so we need to seperate into two seperate strings, then join later
