@@ -19,7 +19,7 @@ This plugin enables you to add an image CDN to your site (e.g. [ImageKit](https:
             cropMode: RESIZE,
             quality: 85
             format: AUTO
-          ) # https://ik.imagekit.io/<some account>/<endpoint id>/tr:w-600,h-400,q-85,c-maintain_ratio,cm-resize,f-auto/path/to/some/image.jpg
+          ) # https://ik.imagekit.io/my-account/named-endpoint/tr:w-600,h-400,q-85,c-maintain_ratio,cm-resize,f-auto/path/to/some/image.jpg
         }
       }
     }
@@ -95,7 +95,15 @@ All of these allow remote file support, so you can use them in front of a headle
 |---------|--------------|---------|
 | baseUrl | The base URL of your Cloudinary account - this will be show as 'Secure delivery URL:' in your account dashboard. | `https://res.cloudinary.com/<your account>` |
 | preset | `cloudinary` | |
-| imagePrefix | If pulling from a remote source, and your images go into a folder, you will probably need to add that prefix here (make sure to include a leading slash). | '/some-folder' |
+| imagePrefix | If pulling from a remote source, and your images go into a folder, you will probably need to add that prefix here (make sure to include a leading slash). | `/some-folder` |
+
+`sirv`
+
+| Options | Explanantion | Example |
+|---------|--------------|---------|
+| baseUrl | The base URL of your Sirv account (including subdomain) or the domain of your custom endpoint. | `https://<Account Subdomain>.sirv.com` |
+| preset | `sirv` | |
+| imagePrefix | If your images are organised into folders, for example when using the Wordpress plugin, you may need to add this prefix. | `/WP_some_site` |
 
 ### Examples
 
