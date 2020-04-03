@@ -1,4 +1,3 @@
-const get = require('lodash.get')
 const transformers = require('./transformers')
 
 function ImageCDN (api, options) {
@@ -6,7 +5,11 @@ function ImageCDN (api, options) {
   const { site, cdn, types } = options
 
   // Get the configured transformer using either an option preset, or a custom transformer
-  const { createSchemaTypes, createResolverArgs, transformer } = cdn.preset ? transformers[ cdn.preset ] : cdn.transformer
+  const Transformer = cdn.preset ? transformers[ cdn.preset ] : cdn.transformer
+
+  if (!Transformer) throw new Error('Must provide a transformer.')
+
+  const { createSchemaTypes, createResolverArgs, transformer } = Transformer
 
   api.loadSource(({ addSchemaTypes, schema, addSchemaResolvers }) => {
     // Create and add custom cdn schema types - i.e. width, heigh, crop mode
@@ -14,29 +17,18 @@ function ImageCDN (api, options) {
     addSchemaTypes(schemaTypes)
 
     // For each configured typeName, update the sourceField to include the cdn options
-    for (const { typeName, sourceField, sourceFieldPath } of types) {
-      // Set the parent resolver typeName, and the child path (when using a nested object) if required
-      const [parentType, childPath] = sourceFieldPath ? sourceFieldPath.split('.') : [sourceField]
-
+    for (const { typeName, sourceField } of types) {
       addSchemaResolvers({
         [ typeName ]: {
-          [ parentType ]: {
+          [ sourceField ]: {
             // Add configured resolver args
             args: createResolverArgs() || {},
             resolve: (parent, args, ctx, info) => {
               // Get the sourceUrl, using the path key in case of an alias.
               const sourceUrl = parent[ info.path.key ].replace(site.baseUrl, '')
+
               // If no transformer is configure, ignore it and return the original url
               if (!transformer) return sourceUrl
-
-              // If we have a nested object, then return the parent object with the child path key
-              if (childPath) {
-                const transformedSrc = transformer({ cdn, sourceUrl, args })
-                return {
-                  ...parent[ parentType ],
-                  [ childPath ]: transformedSrc
-                }
-              }
 
               // Otherwise handoff to the transformer
               return transformer({ cdn, sourceUrl, args })
