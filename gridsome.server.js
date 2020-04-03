@@ -12,7 +12,7 @@ function ImageCDN (api, options) {
   const { createSchemaTypes, createResolverArgs, transformer } = Transformer
 
   api.loadSource(({ addSchemaTypes, schema, addSchemaResolvers }) => {
-    // Create and add custom cdn schema types - i.e. width, heigh, crop mode
+    // Create and add custom cdn schema types - i.e. width, height, crop mode
     const schemaTypes = createSchemaTypes(schema)
     addSchemaTypes(schemaTypes)
 
