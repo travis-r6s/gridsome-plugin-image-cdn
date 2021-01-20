@@ -93,7 +93,7 @@ All of these allow remote file support, so you can use them in front of a headle
 
 | Options | Explanantion | Example |
 |---------|--------------|---------|
-| baseUrl | The base URL of your Cloudinary account - this will be show as 'Secure delivery URL:' in your account dashboard. | `https://res.cloudinary.com/<your account>` |
+| baseUrl | The base URL of your Cloudinary account - this will be shown as 'Secure delivery URL:' in your account dashboard. | `https://res.cloudinary.com/<your account>` |
 | preset | `cloudinary` | |
 | imagePrefix | If pulling from a remote source, and your images go into a folder, you will probably need to add that prefix here (make sure to include a leading slash). | `/some-folder` |
 
@@ -101,7 +101,7 @@ All of these allow remote file support, so you can use them in front of a headle
 
 | Options | Explanantion | Example |
 |---------|--------------|---------|
-| baseUrl | The base URL of your Sirv account (including subdomain) or the domain of your custom endpoint. | `https://<Account Subdomain>.sirv.com` |
+| baseUrl | The base URL of your Sirv account (including subdomain) or the domain of your custom endpoint. | `https://<account subdomain>.sirv.com` |
 | preset | `sirv` | |
 | imagePrefix | If your images are organised into folders, for example when using the Wordpress plugin, you may need to add this prefix. | `/WP_some_site` |
 
@@ -223,7 +223,7 @@ query {
 
 ## Lazy Load
 
-You could easily use this plugin with some Vue lazy load plugins by making use of GraphQL aliases - for example, with [`v-lazy-image`](https://github.com/alexjoverm/v-lazy-image) (using `imageKit`):
+You could easily use this plugin with some Vue lazy load plugins, by making use of GraphQL aliases - for example, with [`v-lazy-image`](https://github.com/alexjoverm/v-lazy-image) (using `imageKit`):
 
 ```vue
 <template>
