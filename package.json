@@ -7,6 +7,9 @@
     "email": "travis@travisreynolds.dev",
     "name": "Travis Reynolds"
   },
+  "scripts": {
+    "lint": "eslint . --ext js --fix"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/thetre97/gridsome-plugin-image-cdn.git"
