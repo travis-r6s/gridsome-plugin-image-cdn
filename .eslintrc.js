@@ -1,3 +1,7 @@
 module.exports = {
-  extends: ['travisreynolds-node']
+  extends: ['travisreynolds-node'],
+  plugins: ['jest'],
+  env: {
+    'jest/globals': true
+  }
 }
