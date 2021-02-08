@@ -25,8 +25,8 @@ function ImageCDN (api, options) {
             args: createResolverArgs() || {},
             resolve: (parent, args, ctx, info) => {
               // returns null if sourceField is undefined or null.
-              if (!parent[ sourceField ] || parent[ sourceField ].length === 0) return null
-              
+              if (!parent[ sourceField ]) return null
+
               // Get the sourceUrl, using either the sourceField, or the path key in case of an alias.
               const sourceUrl = (parent[ sourceField ] || parent[ info.path.key ]).replace(site.baseUrl, '')
 
