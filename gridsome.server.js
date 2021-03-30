@@ -28,13 +28,14 @@ function ImageCDN (api, options) {
               if (!parent[ sourceField ]) return null
 
               // Get the sourceUrl, using either the sourceField, or the path key in case of an alias.
-              const sourceUrl = (parent[ sourceField ] || parent[ info.path.key ]).replace(site.baseUrl, '')
+              const sourceUrl = (parent[ sourceField ] || parent[ info.path.key ])
+              const strippedUrl = Array.isArray(site.baseUrl) ? site.baseUrl.reduce((str, url) => str.replace(url, ''), sourceUrl) : sourceUrl.replace(site.baseUrl, '')
 
               // If no transformer is configure, ignore it and return the original url
-              if (!transformer) return sourceUrl
+              if (!transformer) return strippedUrl
 
               // Otherwise handoff to the transformer
-              return transformer({ cdn, sourceUrl, args })
+              return transformer({ cdn, args, sourceUrl: strippedUrl })
             }
           }
         }
