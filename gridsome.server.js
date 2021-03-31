@@ -24,11 +24,13 @@ function ImageCDN (api, options) {
             // Add configured resolver args
             args: createResolverArgs() || {},
             resolve: (parent, args, ctx, info) => {
-              // returns null if sourceField is undefined or null.
-              if (!parent[ sourceField ]) return null
-
               // Get the sourceUrl, using either the sourceField, or the path key in case of an alias.
               const sourceUrl = (parent[ sourceField ] || parent[ info.path.key ])
+
+              // Returns null if sourceField is undefined or null.
+              if (!sourceUrl) return null
+
+              // Remove any urls that will be replaced
               const strippedUrl = Array.isArray(site.baseUrl) ? site.baseUrl.reduce((str, url) => str.replace(url, ''), sourceUrl) : sourceUrl.replace(site.baseUrl, '')
 
               // If no transformer is configure, ignore it and return the original url
