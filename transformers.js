@@ -138,7 +138,8 @@ const sirvTransformer = {
   transformArgs: new Map([
     ['height', { prefix: 'h', arg: { type: 'Int' } }],
     ['width', { prefix: 'w', arg: { type: 'Int' } }],
-    ['scale', { prefix: 'scale', arg: { type: 'enum', name: 'Scale', values: ['fit', 'fill', 'ignore', 'noup'] } }],
+    ['scale', { prefix: 'scale', arg: { type: 'Int' } }],
+    ['scaleOption', { prefix: 'scale', arg: { type: 'enum', name: 'Scale', values: ['fit', 'fill', 'ignore', 'noup'] } }],
     ['rotate', { prefix: 'rotate', arg: { type: 'Int' } }],
     ['opacity', { prefix: 'opacity', arg: { type: 'Int' } }],
     ['brightness', { prefix: 'brightness', arg: { type: 'Int' } }],
