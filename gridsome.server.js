@@ -1,3 +1,4 @@
+const path = require('path')
 const transformers = require('./transformers')
 
 function ImageCDN (api, options) {
@@ -17,7 +18,7 @@ function ImageCDN (api, options) {
     addSchemaTypes(schemaTypes)
 
     // For each configured typeName, update the sourceField to include the cdn options
-    for (const { typeName, sourceField } of types) {
+    for (const { typeName, sourceField, exclude = [] } of types) {
       addSchemaResolvers({
         [ typeName ]: {
           [ sourceField ]: {
@@ -30,10 +31,14 @@ function ImageCDN (api, options) {
               // Returns null if sourceField is undefined or null.
               if (!sourceUrl) return null
 
+              // Exclude any URL's that contain a matching extension
+              const { ext = '' } = path.parse(sourceUrl)
+              if (exclude.includes(ext.replace('.', ''))) return sourceUrl
+
               // Remove any urls that will be replaced
               const strippedUrl = Array.isArray(site.baseUrl) ? site.baseUrl.reduce((str, url) => str.replace(url, ''), sourceUrl) : sourceUrl.replace(site.baseUrl, '')
 
-              // If no transformer is configure, ignore it and return the original url
+              // If no transformer is configured, ignore it and return the original url
               if (!transformer) return strippedUrl
 
               // Otherwise handoff to the transformer
