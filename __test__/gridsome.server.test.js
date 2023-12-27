@@ -89,7 +89,7 @@ test('resolves the full custom CDN URL', async () => {
   expect(responses[ 0 ]).toEqual('http://example.com/image.jpg')
 })
 
-test('resolves null as the orignal value', async () => { // Issue https://github.com/thetre97/gridsome-plugin-image-cdn/issues/20
+test('resolves null as the orignal value', async () => { // Issue https://github.com/travis-r6s/gridsome-plugin-image-cdn/issues/20
   const responses = await setup(
     {
       cdn: {
@@ -114,7 +114,7 @@ test('resolves null as the orignal value', async () => { // Issue https://github
   expect(responses[ 0 ]).toEqual(null)
 })
 
-test('resolves empty string as null', async () => { // Issue https://github.com/thetre97/gridsome-plugin-image-cdn/issues/20
+test('resolves empty string as null', async () => { // Issue https://github.com/travis-r6s/gridsome-plugin-image-cdn/issues/20
   const responses = await setup(
     {
       cdn: {
